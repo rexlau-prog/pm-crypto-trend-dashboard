@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pm_crypto_trend — Strategy Report Dashboard</title>
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#131823; --panel2:#1a2030; --line:#26304a;
+    --txt:#d7dee8; --muted:#8a98ac; --accent:#4da3ff; --green:#3ad29f;
+    --red:#ff6b6b; --amber:#ffc14d; --purple:#b48cff; --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;font-size:15px}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1180px;margin:0 auto;padding:32px 24px 80px}
+  header.hero{border:1px solid var(--line);border-radius:16px;
+    background:linear-gradient(135deg,#141a28,#0e1320);padding:28px 30px;margin-bottom:26px}
+  .hero h1{margin:0 0 6px;font-size:26px;letter-spacing:.3px}
+  .hero .sub{color:var(--muted);font-size:15px}
+  .hero .meta{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;font-size:12.5px}
+  .tag{background:var(--panel2);border:1px solid var(--line);border-radius:999px;
+    padding:4px 12px;color:var(--muted);font-family:var(--mono)}
+  .tag b{color:var(--txt);font-weight:600}
+  h2{font-size:18px;margin:34px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:9px}
+  h2 .n{font-family:var(--mono);font-size:13px;color:var(--accent);
+    border:1px solid var(--line);border-radius:7px;padding:2px 8px;background:var(--panel)}
+  p.lead{color:var(--muted);max-width:850px}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .card h3{margin:0 0 4px;font-size:16px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+  .card h3 .ttl{display:flex;align-items:center;gap:9px}
+  .badge{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:999px;font-weight:600;white-space:nowrap}
+  .b-on{background:rgba(58,210,159,.14);color:var(--green);border:1px solid rgba(58,210,159,.4)}
+  .b-off{background:rgba(255,107,107,.12);color:var(--red);border:1px solid rgba(255,107,107,.35)}
+  .b-legacy{background:rgba(255,193,77,.12);color:var(--amber);border:1px solid rgba(255,193,77,.35)}
+  .card .one{color:var(--muted);font-size:13.5px;margin:2px 0 14px}
+  ol.steps{margin:0;padding-left:0;list-style:none;counter-reset:s}
+  ol.steps li{counter-increment:s;position:relative;padding:7px 0 7px 30px;font-size:13.5px;border-top:1px dashed var(--line)}
+  ol.steps li:first-child{border-top:none}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:7px;width:20px;height:20px;
+    background:var(--panel2);border:1px solid var(--line);border-radius:6px;color:var(--accent);
+    font-family:var(--mono);font-size:11px;display:flex;align-items:center;justify-content:center}
+  .kv{margin-top:13px;border-top:1px solid var(--line);padding-top:11px;display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:12.5px}
+  .kv dt{color:var(--muted);font-family:var(--mono)}
+  .kv dd{margin:0;text-align:right;font-family:var(--mono)}
+  code,.mono{font-family:var(--mono)}
+  .pnl{font-family:var(--mono);font-size:12.5px;background:var(--panel2);border:1px solid var(--line);
+    border-radius:8px;padding:9px 11px;margin-top:12px;color:var(--txt)}
+  .pos{color:var(--green)} .neg{color:var(--red)} .neu{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  td.mono,th.mono{font-family:var(--mono)}
+  tbody tr:hover{background:var(--panel2)}
+  .risk{border-left:3px solid var(--line);padding:13px 16px;background:var(--panel);
+    border-radius:0 10px 10px 0;margin-bottom:11px}
+  .risk.crit{border-left-color:var(--red)} .risk.warn{border-left-color:var(--amber)} .risk.info{border-left-color:var(--accent)}
+  .risk .rt{font-weight:600;font-size:14px;display:flex;align-items:center;gap:9px;margin-bottom:3px}
+  .risk .sev{font-family:var(--mono);font-size:10.5px;padding:2px 8px;border-radius:5px}
+  .sev.s-crit{background:rgba(255,107,107,.14);color:var(--red)} .sev.s-warn{background:rgba(255,193,77,.14);color:var(--amber)} .sev.s-info{background:rgba(77,163,255,.14);color:var(--accent)}
+  .risk p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+  .risk p b{color:var(--txt)}
+  .flow{display:flex;flex-wrap:wrap;gap:14px;align-items:stretch}
+  .flow .node{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px 14px;flex:1;min-width:150px}
+  .flow .node .h{font-size:13px;font-weight:600;margin-bottom:3px}
+  .flow .node .d{font-size:11.5px;color:var(--muted);font-family:var(--mono)}
+  .flow .node.in{border-color:rgba(77,163,255,.4)} .flow .node.core{border-color:rgba(180,140,255,.45)} .flow .node.out{border-color:rgba(58,210,159,.4)}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin:8px 0 4px;font-size:12px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .sw{width:13px;height:13px;border-radius:3px;display:inline-block}
+  .note{font-size:12.5px;color:var(--muted);margin-top:8px}
+  footer{margin-top:46px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+  .hl{color:var(--txt);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>pm_crypto_trend &mdash; Strategy Report</h1>
+  <div class="sub">Polymarket 5-minute crypto Up/Down prediction-market trading bot &middot; <b>Strong-Side Dip-Buy</b> + <b>Dual-Limit</b> strategies</div>
+  <div class="meta">
+    <span class="tag">repo <b>dickyrider/pm_crypto_trend</b></span>
+    <span class="tag">fork <b>rexlau-prog/pm_crypto_trend</b></span>
+    <span class="tag">lang <b>Python (asyncio)</b></span>
+    <span class="tag">files <b>8</b></span>
+    <span class="tag">venue <b>Polymarket CLOB</b></span>
+    <span class="tag">report <b>2026-05-20</b></span>
+  </div>
+</header>
+
+<!-- OVERVIEW -->
+<h2><span class="n">01</span> What this bot is</h2>
+<p class="lead">
+Polymarket lists recurring <span class="hl">5-minute "Up or Down" markets</span> for crypto (BTC, ETH, SOL, BNB, HYPE&hellip;).
+Every 300 seconds a fresh market opens with a slug like <code>btc-updown-5m-&lt;unix_window&gt;</code>, trades two outcome
+tokens (<span class="hl">YES</span> = "up", <span class="hl">NO</span> = "down"), and resolves to exactly one side paying $1.00 at expiry.
+This bot connects to Polymarket's CLOB, streams the order book, and runs <span class="hl">three independent strategies</span>
+(each toggled by a config flag) that place real limit orders on those 5-minute markets. P&amp;L is tracked per symbol,
+persisted to disk, and pushed to Telegram.
+</p>
+<div class="grid g3" style="margin-top:14px">
+  <div class="card">
+    <h3><span class="ttl">Market clock</span></h3>
+    <div class="one">Markets rotate on a fixed 5-min UNIX grid; the bot derives slugs locally — no scheduler needed.</div>
+    <dl class="kv">
+      <dt>window</dt><dd>300 s</dd>
+      <dt>slug</dt><dd>{sym}-updown-5m-{ts}</dd>
+      <dt>resolve</dt><dd>1 side &rarr; $1.00</dd>
+    </dl>
+  </div>
+  <div class="card">
+    <h3><span class="ttl">Order routing</span></h3>
+    <div class="one">L1 key derives L2 API creds; orders are signed &amp; posted through a proxy/funder wallet (sig type 3).</div>
+    <dl class="kv">
+      <dt>client</dt><dd>py_clob_client_v2</dd>
+      <dt>chain</dt><dd>Polygon (137)</dd>
+      <dt>order</dt><dd>GTC limit</dd>
+    </dl>
+  </div>
+  <div class="card">
+    <h3><span class="ttl">Live feeds</span></h3>
+    <div class="one">Three WebSockets + a REST metadata API keep prices, fills and asset IDs fresh in one shared dict.</div>
+    <dl class="kv">
+      <dt>spot</dt><dd>Binance WS</dd>
+      <dt>book</dt><dd>Polymarket mkt WS</dd>
+      <dt>fills</dt><dd>Polymarket user WS</dd>
+    </dl>
+  </div>
+</div>
+
+<!-- STRATEGIES -->
+<h2><span class="n">02</span> The three strategies</h2>
+<p class="lead">All three loops run concurrently inside one event loop and share the same order/fill plumbing. In the
+forked default config only <span class="hl">Strong-Side is enabled</span>; the other two are off.</p>
+
+<div class="grid g3">
+
+  <!-- Strong Side -->
+  <div class="card">
+    <h3><span class="ttl">⚡ Strong-Side Dip-Buy</span><span class="badge b-on">ENABLED</span></h3>
+    <div class="one">Read the market's first 90 s, then buy the favoured side <em>only if it's cheap</em>, and hold to expiry.</div>
+    <ol class="steps">
+      <li>At rollover, record every YES/NO price tick for the first <b>90 s</b>.</li>
+      <li>Average each side over the window &rarr; the higher average is the <b>strong side</b>.</li>
+      <li>Place a limit BUY on the strong side at <code>min(0.50, best_ask)</code> — only enters on a dip.</li>
+      <li>Hold to expiry; win if the strong side's price &gt; the other at settlement.</li>
+    </ol>
+    <div class="pnl">P&amp;L/fill&nbsp;=&nbsp;(<span class="pos">1.0&minus;entry</span>) if&nbsp;win&nbsp;else&nbsp;(<span class="neg">&minus;entry</span>) &times; shares</div>
+    <dl class="kv">
+      <dt>symbols</dt><dd>eth ×5</dd>
+      <dt>lookback</dt><dd>90 s</dd>
+      <dt>entry cap</dt><dd>0.50</dd>
+      <dt>flag</dt><dd>STRONG_SIDE_ENABLE</dd>
+    </dl>
+  </div>
+
+  <!-- Dual Limit -->
+  <div class="card">
+    <h3><span class="ttl">⚖️ Dual-Limit</span><span class="badge b-off">DISABLED</span></h3>
+    <div class="one">Bid <em>both</em> YES and NO cheap. If both fill, you own a guaranteed-$1 pair for &lt;$1 — a volatility arb.</div>
+    <ol class="steps">
+      <li>At rollover, place limit BUY on <b>both</b> YES and NO at <code>0.25</code> for each symbol.</li>
+      <li>Monitor fills via REST for up to <b>270 s</b>.</li>
+      <li>Cancel whatever is still unfilled at the end of the window.</li>
+      <li>Book P&amp;L by fill outcome; persist to <code>dual_pnl.json</code>.</li>
+    </ol>
+    <div class="pnl">
+      both&nbsp;fill: <span class="pos">+shares×(1&minus;2p)</span><br>
+      one&nbsp;fills: <span class="neg">&minus;p×shares</span> (conservative)<br>
+      none: <span class="neu">0</span>
+    </div>
+    <dl class="kv">
+      <dt>symbols</dt><dd>btc/eth/bnb ×15</dd>
+      <dt>price</dt><dd>0.25</dd>
+      <dt>max fill wait</dt><dd>270 s</dd>
+      <dt>flag</dt><dd>DUAL_LIMIT_ENABLE</dd>
+    </dl>
+  </div>
+
+  <!-- Auto momentum -->
+  <div class="card">
+    <h3><span class="ttl">🚀 Auto Momentum</span><span class="badge b-legacy">LEGACY / OFF</span></h3>
+    <div class="one">The original "chase the strong side" loop: if one side's ask is rich, buy it and scalp with a decaying TP.</div>
+    <ol class="steps">
+      <li>Active only at <b>30–150 s</b> into the window.</li>
+      <li>If YES (or NO) <code>best_ask &gt; 0.60</code>, buy at <code>ask + 0.01</code>.</li>
+      <li>10 s fill timeout &rarr; cancel &amp; re-quote.</li>
+      <li>On fill, run a decaying take-profit ladder (+0.04 &rarr; +0.01, force-exit at 32 s).</li>
+    </ol>
+    <div class="pnl">Exit: TP starts <span class="pos">+0.04</span>, &minus;0.01 every 8 s, floor <span class="neu">+0.01</span>, market-dump at 32 s</div>
+    <dl class="kv">
+      <dt>symbol</dt><dd>MARKET_SYMBOL</dd>
+      <dt>trigger</dt><dd>ask &gt; 0.60</dd>
+      <dt>size</dt><dd>ORDER_SIZE (5)</dd>
+      <dt>flag</dt><dd>ENABLE_AUTO_TRADE</dd>
+    </dl>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<h2><span class="n">03</span> What happens inside one 5-minute window</h2>
+<div class="legend">
+  <span><i class="sw" style="background:var(--accent)"></i> observe / monitor</span>
+  <span><i class="sw" style="background:var(--purple)"></i> decision point</span>
+  <span><i class="sw" style="background:var(--green)"></i> hold position</span>
+  <span><i class="sw" style="background:var(--amber)"></i> active trade window</span>
+  <span><i class="sw" style="background:var(--red)"></i> cancel / settle</span>
+</div>
+<div class="card" style="padding:18px 14px">
+<svg viewBox="0 0 1000 260" width="100%" role="img" aria-label="5-minute window timeline">
+  <!-- axis -->
+  <line x1="60" y1="40" x2="960" y2="40" stroke="#26304a" stroke-width="1"/>
+  <!-- ticks: 0,90,150,270,300 -> x = 60 + s/300*900 -->
+  <g font-family="SF Mono,monospace" font-size="11" fill="#8a98ac" text-anchor="middle">
+    <line x1="60"  y1="36" x2="60"  y2="232" stroke="#1a2030"/><text x="60"  y="28">0s</text>
+    <line x1="330" y1="36" x2="330" y2="232" stroke="#1a2030"/><text x="330" y="28">90s</text>
+    <line x1="510" y1="36" x2="510" y2="232" stroke="#1a2030"/><text x="510" y="28">150s</text>
+    <line x1="870" y1="36" x2="870" y2="232" stroke="#1a2030"/><text x="870" y="28">270s</text>
+    <line x1="960" y1="36" x2="960" y2="232" stroke="#1a2030"/><text x="960" y="28">300s</text>
+  </g>
+
+  <!-- Lane 1: Strong Side  y=60 -->
+  <text x="56" y="74" font-size="12" fill="#d7dee8" text-anchor="end" font-weight="600">Strong-Side</text>
+  <rect x="60"  y="62" width="270" height="18" rx="4" fill="#4da3ff" opacity="0.30"/>
+  <text x="195" y="75" font-size="10.5" fill="#cfe2ff" text-anchor="middle">record 90 ticks</text>
+  <circle cx="330" cy="71" r="6" fill="#b48cff"/>
+  <rect x="336" y="62" width="624" height="18" rx="4" fill="#3ad29f" opacity="0.30"/>
+  <text x="648" y="75" font-size="10.5" fill="#bff3df" text-anchor="middle">enter on dip · hold to expiry</text>
+  <circle cx="960" cy="71" r="6" fill="#ff6b6b"/>
+
+  <!-- Lane 2: Dual Limit  y=110 -->
+  <text x="56" y="124" font-size="12" fill="#d7dee8" text-anchor="end" font-weight="600">Dual-Limit</text>
+  <circle cx="60" cy="121" r="6" fill="#b48cff"/>
+  <rect x="66" y="112" width="804" height="18" rx="4" fill="#4da3ff" opacity="0.30"/>
+  <text x="468" y="125" font-size="10.5" fill="#cfe2ff" text-anchor="middle">place YES+NO @0.25 · monitor fills</text>
+  <circle cx="870" cy="121" r="6" fill="#ff6b6b"/>
+  <text x="915" y="125" font-size="10" fill="#ff9b9b" text-anchor="middle">cancel</text>
+
+  <!-- Lane 3: Auto momentum  y=160 -->
+  <text x="56" y="174" font-size="12" fill="#d7dee8" text-anchor="end" font-weight="600">Auto Mom.</text>
+  <rect x="150" y="162" width="360" height="18" rx="4" fill="#ffc14d" opacity="0.30"/>
+  <text x="330" y="175" font-size="10.5" fill="#ffe2a8" text-anchor="middle">active window (ask&gt;0.60 → buy → TP ladder)</text>
+
+  <!-- settlement marker -->
+  <line x1="960" y1="40" x2="960" y2="200" stroke="#ff6b6b" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+  <text x="960" y="216" font-size="10.5" fill="#ff9b9b" text-anchor="middle" font-family="SF Mono,monospace">EXPIRY · resolve</text>
+</svg>
+</div>
+
+<!-- ARCHITECTURE -->
+<h2><span class="n">04</span> Architecture &amp; data flow</h2>
+<p class="lead"><code>main.py</code> spins up every feed and strategy as asyncio tasks (plus two daemon threads for the
+console printer and keyboard input). Everything communicates through one mutable <code>shared_data</code> dict.</p>
+<div class="grid" style="grid-template-columns:1fr;gap:12px">
+  <div>
+    <div class="note" style="margin-bottom:6px">Inputs &rarr;</div>
+    <div class="flow">
+      <div class="node in"><div class="h">Binance WS</div><div class="d">spot_price ref</div></div>
+      <div class="node in"><div class="h">Polymarket Market WS</div><div class="d">best bid/ask, last px</div></div>
+      <div class="node in"><div class="h">Polymarket User WS</div><div class="d">trade/order fills</div></div>
+      <div class="node in"><div class="h">Gamma REST API</div><div class="d">slug &rarr; asset_ids</div></div>
+    </div>
+  </div>
+  <div>
+    <div class="note" style="margin-bottom:6px">Core &rarr;</div>
+    <div class="flow">
+      <div class="node core"><div class="h">shared_data</div><div class="d">single source of truth</div></div>
+      <div class="node core"><div class="h">strategy loops ×3</div><div class="d">auto · dual · strong-side</div></div>
+      <div class="node core"><div class="h">order_manager</div><div class="d">post_order / fills / cancel</div></div>
+      <div class="node core"><div class="h">py_clob_client_v2</div><div class="d">sign + POST to CLOB</div></div>
+    </div>
+  </div>
+  <div>
+    <div class="note" style="margin-bottom:6px">Outputs &rarr;</div>
+    <div class="flow">
+      <div class="node out"><div class="h">Polymarket CLOB</div><div class="d">live GTC orders</div></div>
+      <div class="node out"><div class="h">Telegram bot</div><div class="d">fills · P&amp;L · hourly</div></div>
+      <div class="node out"><div class="h">dual_pnl.json</div><div class="d">persisted P&amp;L</div></div>
+      <div class="node out"><div class="h">console printer</div><div class="d">0.5 s status line</div></div>
+    </div>
+  </div>
+</div>
+<div class="grid g2" style="margin-top:16px">
+  <div class="card">
+    <h3 style="font-size:14px"><span class="ttl">Source files</span></h3>
+    <table>
+      <tbody>
+        <tr><td class="mono">main.py</td><td>Orchestrator: builds client, launches feeds + 3 strategy loops, market rollover, exit monitor</td></tr>
+        <tr><td class="mono">order_manager.py</td><td>post_order, dual-limit + strong-side helpers, fill checks, cancels, P&amp;L persistence</td></tr>
+        <tr><td class="mono">ws_client.py</td><td>Binance WS, Polymarket market WS, authenticated user WS, console printer</td></tr>
+        <tr><td class="mono">utils.py</td><td>5-min slug math, Gamma asset-id lookup, HKT logging</td></tr>
+        <tr><td class="mono">config.py</td><td>Loads secrets from <code>.env</code> + all tunable parameters</td></tr>
+        <tr><td class="mono">dual_pnl.json</td><td>Persisted per-symbol P&amp;L (survives restarts)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="font-size:14px"><span class="ttl">Persisted P&amp;L snapshot</span> <span class="badge b-off" style="background:var(--panel2);color:var(--muted);border-color:var(--line)">dual_pnl.json</span></h3>
+    <table>
+      <thead><tr><th>Symbol</th><th class="mono">Total P&amp;L</th><th class="mono">Trades</th><th class="mono">Wins</th><th class="mono">Win&nbsp;%</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">BTC</td><td class="mono pos">+$7.50</td><td class="mono">17</td><td class="mono">7</td><td class="mono">41%</td></tr>
+        <tr><td class="mono">HYPE</td><td class="mono pos">+$1.25</td><td class="mono">9</td><td class="mono">3</td><td class="mono">33%</td></tr>
+        <tr><td class="mono"><b>Total</b></td><td class="mono pos"><b>+$8.75</b></td><td class="mono"><b>26</b></td><td class="mono"><b>10</b></td><td class="mono"><b>38%</b></td></tr>
+      </tbody>
+    </table>
+    <div class="note">Sub-$1 stakes &rarr; this is paper/seed-scale validation data, not production volume.</div>
+  </div>
+</div>
+
+<!-- CONFIG -->
+<h2><span class="n">05</span> Configuration reference</h2>
+<p class="lead">All tunables live in <code>config.py</code>; secrets are read from a <code>.env</code> file (see README). Defaults shown are from the forked repo.</p>
+<div class="grid g2">
+  <div class="card" style="padding:6px 8px">
+    <table>
+      <thead><tr><th>Parameter</th><th class="mono">Default</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">MARKET_SYMBOL</td><td class="mono">btc</td><td>Primary market for the legacy auto loop / main WS</td></tr>
+        <tr><td class="mono">ORDER_SIZE</td><td class="mono">5</td><td>Shares per auto-momentum order</td></tr>
+        <tr><td class="mono">ENABLE_AUTO_TRADE</td><td class="mono">False</td><td>Toggle legacy momentum loop</td></tr>
+        <tr><td class="mono">COMMISSION_RATE</td><td class="mono">0.03024</td><td>Sell-side haircut; bot only sells 97%</td></tr>
+        <tr><td class="mono">TP_START_OFFSET</td><td class="mono">0.04</td><td>Initial take-profit above cost</td></tr>
+        <tr><td class="mono">TP_DECREASE_INTERVAL</td><td class="mono">8 s</td><td>How often TP steps down</td></tr>
+        <tr><td class="mono">TP_TIMEOUT_SECONDS</td><td class="mono">32 s</td><td>Force market-exit deadline</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card" style="padding:6px 8px">
+    <table>
+      <thead><tr><th>Parameter</th><th class="mono">Default</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">DUAL_LIMIT_ENABLE</td><td class="mono">False</td><td>Toggle dual-limit arb</td></tr>
+        <tr><td class="mono">DUAL_LIMIT_PRICE</td><td class="mono">0.25</td><td>Bid price for each side</td></tr>
+        <tr><td class="mono">DUAL_LIMIT_SYMBOLS</td><td class="mono">btc/eth/bnb:15</td><td>Symbols &rarr; shares per side</td></tr>
+        <tr><td class="mono">STRONG_SIDE_ENABLE</td><td class="mono">True</td><td>Toggle strong-side dip buy</td></tr>
+        <tr><td class="mono">STRONG_SIDE_SYMBOLS</td><td class="mono">eth:5</td><td>Symbols &rarr; shares</td></tr>
+        <tr><td class="mono">STRONG_SIDE_LOOKBACK</td><td class="mono">90 s</td><td>Observation window length</td></tr>
+        <tr><td class="mono">STRONG_SIDE_ENTRY</td><td class="mono">0.50</td><td>Limit-buy price cap (dip)</td></tr>
+        <tr><td class="mono">TRADING_START / END</td><td class="mono">18 / 4 HKT</td><td>Overnight trading window only</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- RISKS -->
+<h2><span class="n">06</span> Setup blockers, risks &amp; gotchas</h2>
+<p class="lead">Findings from the code review — read these before running real money through it.</p>
+
+<div class="risk crit">
+  <div class="rt"><span class="sev s-crit">BLOCKER</span> Missing dependency: <code>py_clob_client_v2</code></div>
+  <p>Every order goes through <code>py_clob_client_v2</code>, but it is <b>not on PyPI, not vendored in the repo, and not in <code>requirements.txt</code></b>. It's a customised fork of Polymarket's <code>py-clob-client</code>. You must obtain/build it (ask your partner for the package) before the bot will even import. <code>eth_account</code> and <code>httpx</code> are also imported but missing from requirements.</p>
+</div>
+<div class="risk crit">
+  <div class="rt"><span class="sev s-crit">SECURITY</span> No <code>.gitignore</code> &rarr; private-key leak risk</div>
+  <p>The bot reads your <b>Polygon private key</b> from <code>.env</code>, but the repo shipped with <b>no <code>.gitignore</code></b>. One stray <code>git add .</code> would commit your key. A <code>.gitignore</code> and <code>.env.example</code> have been added in this fork — keep them.</p>
+</div>
+<div class="risk warn">
+  <div class="rt"><span class="sev s-warn">CORRECTNESS</span> Dual-limit one-sided P&amp;L is pessimistic</div>
+  <p>When only one leg fills, P&amp;L is booked as <code>&minus;price×shares</code> regardless of how that side actually resolves. A one-sided fill that wins ($1) is <b>not</b> credited — real P&amp;L can be better than the log shows.</p>
+</div>
+<div class="risk warn">
+  <div class="rt"><span class="sev s-warn">OPS</span> Self-restart needs an external supervisor</div>
+  <p>At the end of the trading window the bot calls <code>os._exit(0)</code> to reload code. Without <code>systemd</code> / <code>pm2</code> / a restart loop, it just dies and won't trade the next session.</p>
+</div>
+<div class="risk info">
+  <div class="rt"><span class="sev s-info">HYGIENE</span> Stale <code>config.example.py</code></div>
+  <p>The example config predates the <code>.env</code> refactor and the dual/strong-side params — it even claims <code>config.py</code> is gitignored (it isn't). Treat <code>config.py</code> + the new <code>.env.example</code> as the source of truth.</p>
+</div>
+<div class="risk info">
+  <div class="rt"><span class="sev s-info">DESIGN</span> Latency &amp; fee assumptions</div>
+  <p>Edges here are thin (cents per share). Real fills depend on Polymarket queue priority, the 3% sell haircut, and order latency. The committed P&amp;L is tiny-stake validation, not proof of scalable edge. Backtest/paper-trade before sizing up.</p>
+</div>
+
+<footer>
+  Generated by Claude Code on 2026-05-20 from a static read of <code>rexlau-prog/pm_crypto_trend</code> @ <code>cf76ff9</code>.
+  No code was executed. P&amp;L figures are read from the committed <code>dual_pnl.json</code>. This document is an engineering
+  summary, not financial advice.
+</footer>
+
+</div>
+</body>
+</html>
