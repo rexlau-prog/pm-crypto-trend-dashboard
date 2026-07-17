@@ -8,7 +8,7 @@ h1{font-size:20px;margin:0 0 2px} .muted{color:#8b96a9;font-size:13px}
 .verdict{display:inline-block;margin:14px 0;padding:6px 14px;border-radius:20px;font-weight:600;
   background:#161d2b;border:1px solid #7ea6ff;color:#7ea6ff}
 .bar{height:8px;background:#161d2b;border-radius:4px;margin:6px 0 18px;overflow:hidden}
-.bar i{display:block;height:100%;width:5.0%;background:#7ea6ff}
+.bar i{display:block;height:100%;width:6.0%;background:#7ea6ff}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0 20px}
 .card{background:#161d2b;border:1px solid #212c42;border-radius:10px;padding:12px}
 .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#8b96a9}
@@ -27,17 +27,17 @@ th{color:#8b96a9;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
 </style></head><body><div class="wrap">
 <h1>G1 — Live Validation</h1>
 <div class="muted">Polymarket 5-min · pre-registered gate (mechanics private) · hypothetical fills at real asks, net 3% fee · NO live trading · auto-refresh 2 min</div>
-<div class="verdict">COLLECTING 5/100</div>
+<div class="verdict">COLLECTING 6/100</div>
 <div class="muted">decision at n≥100 resolved T-60 signals: win&gt;55% = real · ≤45% = mirage</div>
 <div class="bar"><i></i></div>
-<div class="cards"><div class="card"><div class="lbl">Signals (resolved)</div><div class="val">5</div><div class="sub">+1 pending · 24.7/day</div></div><div class="card"><div class="lbl">Win rate</div><div class="val">40.0%</div><div class="sub">breakeven ≈ entry×1.03</div></div><div class="card"><div class="lbl">Avg entry</div><div class="val">0.392</div><div class="sub">real ask at decision</div></div><div class="card"><div class="lbl">EV / share</div><div class="val">-0.004</div><div class="sub">net of 3% fee</div></div><div class="card"><div class="lbl">Total P&L</div><div class="val">-0.02 sh</div><div class="sub">per 1-share stake</div></div></div>
-<h2>Equity curve — cumulative P&amp;L per share (T-60)</h2><svg viewBox="0 0 720 180" preserveAspectRatio="none"><line x1="0" y1="169.3" x2="720" y2="169.3" stroke="#2a3550" stroke-dasharray="4 4"/><polyline points="0,169.3 144.0,87.9 288.0,8.0 432.0,63.7 576.0,114.8 720.0,172.0" fill="none" stroke="#ff6b6b" stroke-width="2.5"/></svg>
+<div class="cards"><div class="card"><div class="lbl">Signals (resolved)</div><div class="val">6</div><div class="sub">+0 pending · 28.7/day</div></div><div class="card"><div class="lbl">Win rate</div><div class="val">33.3%</div><div class="sub">breakeven ≈ entry×1.03</div></div><div class="card"><div class="lbl">Avg entry</div><div class="val">0.362</div><div class="sub">real ask at decision</div></div><div class="card"><div class="lbl">EV / share</div><div class="val">-0.039</div><div class="sub">net of 3% fee</div></div><div class="card"><div class="lbl">Total P&L</div><div class="val">-0.24 sh</div><div class="sub">per 1-share stake</div></div></div>
+<h2>Equity curve — cumulative P&amp;L per share (T-60)</h2><svg viewBox="0 0 720 180" preserveAspectRatio="none"><line x1="0" y1="143.2" x2="720" y2="143.2" stroke="#2a3550" stroke-dasharray="4 4"/><polyline points="0,143.2 120.0,75.0 240.0,8.0 360.0,54.7 480.0,97.6 600.0,145.5 720.0,172.0" fill="none" stroke="#ff6b6b" stroke-width="2.5"/></svg>
 <h2>Recent signals (T-60, last 20)</h2>
-<table><tr><th>time</th><th>sym</th><th>side</th><th>entry</th><th>ask size</th><th>result</th><th>P&amp;L/sh</th></tr><tr><td>07-17 21:19Z</td><td>BTC</td><td>UP</td><td>0.210</td><td>42</td><td><span class=p>pending</span></td><td>—</td></tr><tr><td>07-17 20:29Z</td><td>BTC</td><td>UP</td><td>0.380</td><td>50</td><td><span class=l>LOST</span></td><td>-0.391</td></tr><tr><td>07-17 19:54Z</td><td>BTC</td><td>DOWN</td><td>0.340</td><td>109</td><td><span class=l>LOST</span></td><td>-0.350</td></tr><tr><td>07-17 19:34Z</td><td>BTC</td><td>DOWN</td><td>0.370</td><td>105</td><td><span class=l>LOST</span></td><td>-0.381</td></tr><tr><td>07-17 19:19Z</td><td>SOL</td><td>UP</td><td>0.440</td><td>11</td><td><span class=w>WON</span></td><td>+0.547</td></tr><tr><td>07-17 17:44Z</td><td>BTC</td><td>DOWN</td><td>0.430</td><td>74</td><td><span class=w>WON</span></td><td>+0.557</td></tr></table>
+<table><tr><th>time</th><th>sym</th><th>side</th><th>entry</th><th>ask size</th><th>result</th><th>P&amp;L/sh</th></tr><tr><td>07-17 21:19Z</td><td>BTC</td><td>UP</td><td>0.210</td><td>42</td><td><span class=l>LOST</span></td><td>-0.216</td></tr><tr><td>07-17 20:29Z</td><td>BTC</td><td>UP</td><td>0.380</td><td>50</td><td><span class=l>LOST</span></td><td>-0.391</td></tr><tr><td>07-17 19:54Z</td><td>BTC</td><td>DOWN</td><td>0.340</td><td>109</td><td><span class=l>LOST</span></td><td>-0.350</td></tr><tr><td>07-17 19:34Z</td><td>BTC</td><td>DOWN</td><td>0.370</td><td>105</td><td><span class=l>LOST</span></td><td>-0.381</td></tr><tr><td>07-17 19:19Z</td><td>SOL</td><td>UP</td><td>0.440</td><td>11</td><td><span class=w>WON</span></td><td>+0.547</td></tr><tr><td>07-17 17:44Z</td><td>BTC</td><td>DOWN</td><td>0.430</td><td>74</td><td><span class=w>WON</span></td><td>+0.557</td></tr></table>
 <h2>Per symbol (T-60)</h2>
-<table><tr><th>symbol</th><th>n</th><th>win%</th><th>P&amp;L</th></tr><tr><td>BTC</td><td>4</td><td>25%</td><td>-0.57</td></tr><tr><td>SOL</td><td>1</td><td>100%</td><td>+0.55</td></tr></table>
+<table><tr><th>symbol</th><th>n</th><th>win%</th><th>P&amp;L</th></tr><tr><td>BTC</td><td>5</td><td>20%</td><td>-0.78</td></tr><tr><td>SOL</td><td>1</td><td>100%</td><td>+0.55</td></tr></table>
 <h2>Secondary horizon (T-10)</h2><div class="muted">n=10 · win 40.0% · entry 0.229 · EV +0.164/sh</div>
-<div class="health"><span class="dot"></span>logger heartbeat 6s ago ·
- evals last 24h: 680 (CL 100%, book 96%) ·
- running 0.2d · generated 2026-07-17 21:20:02Z</div>
+<div class="health"><span class="dot"></span>logger heartbeat 2s ago ·
+ evals last 24h: 703 (CL 100%, book 97%) ·
+ running 0.2d · generated 2026-07-17 21:30:02Z</div>
 </div></body></html>
