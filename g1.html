@@ -1,0 +1,43 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="refresh" content="120">
+<title>G1 Live Validation</title><style>
+body{background:#0d1117;color:#dbe2ef;font:15px/1.5 -apple-system,'Segoe UI',sans-serif;margin:0;padding:24px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:20px;margin:0 0 2px} .muted{color:#8b96a9;font-size:13px}
+.verdict{display:inline-block;margin:14px 0;padding:6px 14px;border-radius:20px;font-weight:600;
+  background:#161d2b;border:1px solid #7ea6ff;color:#7ea6ff}
+.bar{height:8px;background:#161d2b;border-radius:4px;margin:6px 0 18px;overflow:hidden}
+.bar i{display:block;height:100%;width:0.0%;background:#7ea6ff}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0 20px}
+.card{background:#161d2b;border:1px solid #212c42;border-radius:10px;padding:12px}
+.lbl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#8b96a9}
+.val{font-size:22px;font-weight:650;margin:2px 0} .sub{font-size:11px;color:#8b96a9}
+h2{font-size:14px;color:#8b96a9;text-transform:uppercase;letter-spacing:.8px;margin:24px 0 8px}
+svg{width:100%;height:180px;background:#161d2b;border:1px solid #212c42;border-radius:10px}
+table{width:100%;border-collapse:collapse;background:#161d2b;border:1px solid #212c42;border-radius:10px;overflow:hidden}
+th,td{padding:7px 10px;text-align:left;font-size:13px;border-bottom:1px solid #1c2740}
+th{color:#8b96a9;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.w{color:#39d98a;font-weight:600} .l{color:#ff6b6b;font-weight:600} .p{color:#f2c94c}
+.empty{color:#586174;text-align:center;padding:18px;font-size:13px}
+.health{font-size:12px;color:#8b96a9;margin-top:20px;padding:10px 12px;background:#161d2b;
+  border:1px solid #212c42;border-radius:10px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;
+  background:#39d98a}
+</style></head><body><div class="wrap">
+<h1>G1 — Live Validation</h1>
+<div class="muted">Polymarket 5-min · pre-registered gate (mechanics private) · hypothetical fills at real asks, net 3% fee · NO live trading · auto-refresh 2 min</div>
+<div class="verdict">COLLECTING 0/100</div>
+<div class="muted">decision at n≥100 resolved T-60 signals: win&gt;55% = real · ≤45% = mirage</div>
+<div class="bar"><i></i></div>
+<div class="cards"><div class="card"><div class="lbl">Signals (resolved)</div><div class="val">0</div><div class="sub">waiting for first fire</div></div><div class="card"><div class="lbl">Win rate</div><div class="val">—</div><div class="sub">breakeven ≈ entry×1.03</div></div><div class="card"><div class="lbl">Avg entry</div><div class="val">—</div><div class="sub">real ask at decision</div></div><div class="card"><div class="lbl">EV / share</div><div class="val">—</div><div class="sub">net of 3% fee</div></div><div class="card"><div class="lbl">Total P&L</div><div class="val">—</div><div class="sub">per 1-share stake</div></div></div>
+<h2>Equity curve — cumulative P&amp;L per share (T-60)</h2><div class="empty">equity curve appears after the first resolved signal</div>
+<h2>Recent signals (T-60, last 20)</h2>
+<table><tr><th>time</th><th>sym</th><th>side</th><th>entry</th><th>ask size</th><th>result</th><th>P&amp;L/sh</th></tr><tr><td colspan="7" class="empty">no signals fired yet — the gate is selective (~0.5% of windows)</td></tr></table>
+<h2>Per symbol (T-60)</h2>
+<table><tr><th>symbol</th><th>n</th><th>win%</th><th>P&amp;L</th></tr><tr><td colspan="4" class="empty">—</td></tr></table>
+<h2>Secondary horizon (T-10)</h2><div class="muted">n=1 · win 100.0% · entry 0.070 · EV +0.928/sh</div>
+<div class="health"><span class="dot"></span>logger heartbeat 6s ago ·
+ evals last 24h: 168 (CL 100%, book 93%) ·
+ running 0.0d · generated 2026-07-17 17:39:14Z</div>
+</div></body></html>
